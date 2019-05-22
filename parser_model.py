@@ -74,7 +74,6 @@ class ParserModel(nn.Module):
             @return x (Tensor): tensor of embeddings for words represented in t
                                 (batch_size, n_features * embed_size)
         """
-        
         ###  1) Use `self.pretrained_embeddings` to lookup the embeddings for the input tokens in `t`.
         ###  2) After you apply the embedding lookup, you will have a tensor shape (batch_size, n_features, embedding_size).
         ###     Use the tensor `view` method to reshape the embeddings tensor to (batch_size, n_features * embedding_size)
@@ -110,7 +109,6 @@ class ParserModel(nn.Module):
         @return logits (Tensor): tensor of predictions (output after applying the layers of the network)
                                  without applying softmax (batch_size, n_classes)
         """
-
         ### 1) Apply `self.embedding_lookup` to `t` to get the embeddings
         ### 2) Apply `embed_to_hidden` linear layer to the embeddings
         ### 3) Apply relu non-linearity to the output of step 2 to get the hidden units.
