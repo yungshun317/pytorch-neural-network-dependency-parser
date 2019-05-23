@@ -22,7 +22,7 @@ class Config(object):
     use_pos = True
     use_dep = True
     use_dep = use_dep and (not unlabeled)
-    data_path = './data'
+    data_path = './datasets'
     train_file = 'train.conll'
     dev_file = 'dev.conll'
     test_file = 'test.conll'
