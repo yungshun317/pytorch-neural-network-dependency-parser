@@ -26,7 +26,7 @@ class Config(object):
     train_file = 'train.conll'
     dev_file = 'dev.conll'
     test_file = 'test.conll'
-    embedding_file = './data/en-cw.txt'
+    embedding_file = './datasets/en-cw.txt'
 
 class Parser(object):
     """Contains everything needed for transition-based dependency parsing except for the model"""
@@ -96,7 +96,7 @@ class Parser(object):
 
         self.n_tokens = len(tok2id)
         
-        def vectorize(self, examples):
+    def vectorize(self, examples):
         vec_examples = []
         for ex in examples:
             word = [self.ROOT] + [self.tok2id[w] if w in self.tok2id else self.UNK for w in ex['word']]

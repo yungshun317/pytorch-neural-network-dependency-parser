@@ -4,6 +4,52 @@
 
 ## Overview
 
+### Adam Optimizer
+The **Adam (adaptive moment estimation) optimization algorithm** is an extension to stochastic gradient descent that has recently seen broader adopotion for deep learning applications in computer vision and natural language processing.
+
+**Stochastic gradient descent** maintains a single **learning rate** (termed alpha) for all weight updates and the learning rate does not change during training. A learning rate is maintained for each network weight (parameter) and separately adapted as learning unfolds.
+
+Adam combines the advantages of AdaGrad and RMSProp:
+* **Adaptive Gradient Algorithm (AdaGrad):** maintains a per-parameter learning rate that improves performance on problems with sparse gradients (e.g. natural language and computer vision problems).
+* **Root Mean Square Propagation (RMSProp):** also maintains per-parameter learning rates that are adapted based on the average of recent magnitudes of the gradients for the weight (e.g. how quickly it is changing). This means the algorithm does well on online and non-stationary problems (e.g. noisy).
+
+Instead of adapting the parameter learning rates based on the average first moment (the mean) as in RMSProp, Adam also makes use of the average of the second moments of the gradients (the uncentered variance).
+
+### Dropout
+Simply put, **dropout** refers to ignoring units (i.e. neurons) during the training phase of certain set of neurons which is chosen at random. By "ignoring", I mean these units are not considered during a particular forward or backward pass.
+
+Why do we need dropout? The reason is to prevent **over-fitting**. Dropout forces a neural network to learn more robust features that are useful in conjunction with many different random subsets of the other neurons. Dropout roughly doubles the number of iterations required to converge. However, training time for each epoch is less.
+
+### Neural Transition-Based Dependency Parsing
+
+A dependency parser analyzes the grammatical structure of a sentence, establishing relationships between head words, and words which modify those heads. Your implementation will be a transition-based parser, which incrementally builds up a parse one step at a time. At every step it maintains a partial parse, which is represented as follows:
+* A stack of words that are currently being processed.
+* A buffer of words yet to be processed.
+* A list of dependencies predicted by the parser.
+Initially, the stack only contains ROOT, the dependencies list is empty, and the buffer contains all words of the sentence in order. At each step, the parser applies a transition to the partial parse until its buffer is empty and the stack size is 1. The following transitions can be applied:
+* SHIFT: removes the first word from the buffer and pushes it onto the stack.
+* LEFT-ARC: marks the second (second most recently added) item on the stack as a dependent of the first item and removes the second item from the stack.
+* RIGHT-ARC: marks the first (most recently added) item on the stack as a dependent of the second item and removes the first item from the stack.
+
+
+```sh
+$ python run.py
+...
+Average Train Loss: 0.1461492809446859
+Evaluating on dev set
+1445850it [00:00, 26595158.57it/s]
+- dev UAS: 76.93
+
+================================================================================
+TESTING
+================================================================================
+Restoring the best model weights found on the dev set
+Final evaluation on test set
+2919736it [00:00, 27853743.40it/s]
+- test UAS: 76.90
+Done!
+```
+
 ## CUDA, cuDNN, and GPU support
 
 Setting up the environment to train deep neural network models with GPU is a tedious task. The following is an instruction to install TensorFlow and PyTorch with CUDA, cuDNN, and GPU support on Windows 10.
@@ -31,7 +77,7 @@ $ python
 
 If there is an error about `numpy`'s version, run
 ```sh
-$ conda update –all
+$ conda update --all
 ```
 And then try the test again.
 
@@ -91,7 +137,7 @@ $ python
 True
 ```
 
-I definitely don't recommend using Windows 10 as your development environment. However, right now I only have a MSI GT72VR gaming laptop with NVIDIA GeForce GTX 1070 GPU I can use.
+I definitely don't recommend using Windows 10 as your development environment. However, right now I only have a MSI GT72VR gaming laptop with NVIDIA GeForce GTX 1070 GPU as the only machine I can use.
 
 ## Todos
  - Learn NLP from Stanford's [Speech and Language Processing](https://web.stanford.edu/~jurafsky/slp3/) and [Natural Language Processing with Deep Learning](http://web.stanford.edu/class/cs224n/) materials.
