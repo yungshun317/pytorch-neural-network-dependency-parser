@@ -2,9 +2,17 @@
 
 [![Made with Python](https://img.shields.io/badge/Made_with-Python-blue.svg)](https://img.shields.io/badge/Made_with-Python-blue.svg) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+The goal of this project is to introduce two general neural network techniques (Adam Optimization and Dropout) and train a dependency parser to compute predictions on the Penn Treebank dataset. This project is based on one of the assignments of Stanford's [CS224n: Natural Language Processing with Deep Learning](http://web.stanford.edu/class/cs224n/) course.
+
 ## Overview
 
-### Adam Optimizer
+Here is an overview of the project.
+* `parser_transitions.py`: implements the transition mechanics your parser will use by filling in `__init__` and `parse_step` methods of the `PartialParse` class. Also implements the minibatch dependency parsing algorithm in `minibatch_parse`.
+* `parser_model.py`: implements the neural network model by filling in the `__init__`, `embedding_lookup`, and `forward` functions.
+* `run.py`: implements the `train_for_epoch` and `train` functions to train the model and compute predictions on test data from Penn Treebank (annotated with Universal Dependencies).
+* `utils/`: includes `__init__.py`, `general_utils.py`, and `parser_utils.py` which are files provided by the course. I did not modify anything here.
+
+### Adam Optimization
 The **Adam (adaptive moment estimation) optimization algorithm** is an extension to stochastic gradient descent that has recently seen broader adopotion for deep learning applications in computer vision and natural language processing.
 
 **Stochastic gradient descent** maintains a single **learning rate** (termed alpha) for all weight updates and the learning rate does not change during training. A learning rate is maintained for each network weight (parameter) and separately adapted as learning unfolds.
@@ -26,12 +34,64 @@ A dependency parser analyzes the grammatical structure of a sentence, establishi
 * A stack of words that are currently being processed.
 * A buffer of words yet to be processed.
 * A list of dependencies predicted by the parser.
+
 Initially, the stack only contains ROOT, the dependencies list is empty, and the buffer contains all words of the sentence in order. At each step, the parser applies a transition to the partial parse until its buffer is empty and the stack size is 1. The following transitions can be applied:
 * SHIFT: removes the first word from the buffer and pushes it onto the stack.
 * LEFT-ARC: marks the second (second most recently added) item on the stack as a dependent of the first item and removes the second item from the stack.
 * RIGHT-ARC: marks the first (most recently added) item on the stack as a dependent of the second item and removes the first item from the stack.
 
+Go through the sequence of transitions needed for parsing the sentence "I parsed this sentence correctly". The dependency tree for the sentence is shown below.
 
+![dependency parsing][dependency-parsing.png]
+
+| Stack | Buffer | New Dependency | Transition |
+| --- | --- | --- | --- |
+| [ROOT] | [I, parsed, this, sentence, correctly] | | Initial Configuration |
+| [ROOT, I] | [parsed, this, sentence, correctly] | | SHIFT |
+| [ROOT, I, parsed] | [this, sentence, correctly] | | SHIFT |
+| [ROOT, parsed] | [this, sentence, correctly] | parsed -> I | LEFT-ARC |
+| [ROOT, parsed, this] | [sentence, correctly] | | SHIFT |
+| [ROOT, parsed, this, sentence] | [correctly] | | SHIFT |
+| [ROOT, parsed, sentence] | [correctly] | sentence -> this | LEFT-ARC |
+| [ROOT, parsed] | [correctly] | parsed -> sentence | RIGHT-ARC |
+| [ROOT, parsed, correctly] | [] | | SHIFT |
+| [ROOT, parsed] | [] | parsed -> correctly | RIGHT-ARC |
+| [ROOT] | [] | ROOT -> parsed | RIGHT-ARC |
+
+You can run basic tests by
+```sh
+$ python parser_transitions.py part_c
+SHIFT test passed!
+LEFT-ARC test passed!
+RIGHT-ARC test passed!
+parse test passed!
+``` 
+
+Our network will predict which transition should be applied next to a partial parse. We could use it to parse a single sentence by applying predicted transitions until the parse is complete. However, neural networks run much more efficiently when making predictions about batches of data at a time (i.e., predicting the next transition for any different partial parses simultaneously). We can parse sentences in minibatches with the following algorithm:
+> **Input:** sentences, a list of sentences to be parsed and model, our model that makes parse decisions  
+
+> Initialize partial parses as a list of PartialParses, one for each sentence in sentences.  
+> Initialize unfinished parses as a shallow copy of partial parses.  
+> **while** unfinished parses is not empty **do**  
+> &nbsp;Take the first batch size parses in unfinished parses as a minibatch  
+> &nbsp;Use the model to predict the next transition for each partial parse in the minibatch  
+> &nbsp;Perform a parse step on each partial parse in the minibatch with its predicted transition  
+> &nbsp;Remove the completed (empty buffer and stack of size 1) parses from unfinished parses  
+> **end while**  
+
+> **Return:** The dependencies for each (now completed) parse in partial parses.
+
+When `debug=True`, run
+```sh
+$ python run.py
+...
+Average Train Loss: 0.2509939807156722
+Evaluating on dev set
+125250it [00:00, 10693438.96it/s]
+- dev UAS: 63.57
+```
+
+When `debug=False`, run
 ```sh
 $ python run.py
 ...
@@ -49,6 +109,9 @@ Final evaluation on test set
 - test UAS: 76.90
 Done!
 ```
+The result looks really bad because the handout provided by the course says you can get a loss smaller than $0.08$ on the train set and an Unlabeled Attachment Score (UAS) larger than $87$ on the dev set. We can tweak the hyperparameters for our model to improve the performance.
+
+In fact, I think this project is a bit confusing. Also, [the handout](http://web.stanford.edu/class/cs224n/assignments/a3.pdf) also talks about parsing error, but it's not useful for me at this moment.
 
 ## CUDA, cuDNN, and GPU support
 
