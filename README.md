@@ -73,10 +73,10 @@ Our network will predict which transition should be applied next to a partial pa
 > Initialize partial parses as a list of PartialParses, one for each sentence in sentences.  
 > Initialize unfinished parses as a shallow copy of partial parses.  
 > **while** unfinished parses is not empty **do**  
-> &nbsp;Take the first batch size parses in unfinished parses as a minibatch  
-> &nbsp;Use the model to predict the next transition for each partial parse in the minibatch  
-> &nbsp;Perform a parse step on each partial parse in the minibatch with its predicted transition  
-> &nbsp;Remove the completed (empty buffer and stack of size 1) parses from unfinished parses  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Take the first batch size parses in unfinished parses as a minibatch  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the model to predict the next transition for each partial parse in the minibatch  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Perform a parse step on each partial parse in the minibatch with its predicted transition  
+> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove the completed (empty buffer and stack of size 1) parses from unfinished parses  
 > **end while**  
 
 > **Return:** The dependencies for each (now completed) parse in partial parses.
