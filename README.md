@@ -36,13 +36,13 @@ A dependency parser analyzes the grammatical structure of a sentence, establishi
 * A list of dependencies predicted by the parser.
 
 Initially, the stack only contains ROOT, the dependencies list is empty, and the buffer contains all words of the sentence in order. At each step, the parser applies a transition to the partial parse until its buffer is empty and the stack size is 1. The following transitions can be applied:
-* SHIFT: removes the first word from the buffer and pushes it onto the stack.
-* LEFT-ARC: marks the second (second most recently added) item on the stack as a dependent of the first item and removes the second item from the stack.
-* RIGHT-ARC: marks the first (most recently added) item on the stack as a dependent of the second item and removes the first item from the stack.
+* **SHIFT:** removes the first word from the buffer and pushes it onto the stack.
+* **LEFT-ARC:** marks the second (second most recently added) item on the stack as a dependent of the first item and removes the second item from the stack.
+* **RIGHT-ARC:** marks the first (most recently added) item on the stack as a dependent of the second item and removes the first item from the stack.
 
 Go through the sequence of transitions needed for parsing the sentence "I parsed this sentence correctly". The dependency tree for the sentence is shown below.
 
-![dependency parsing][dependency-parsing.png]
+![dependency parsing](dependency-parsing.png)
 
 | Stack | Buffer | New Dependency | Transition |
 | --- | --- | --- | --- |
@@ -70,8 +70,8 @@ parse test passed!
 Our network will predict which transition should be applied next to a partial parse. We could use it to parse a single sentence by applying predicted transitions until the parse is complete. However, neural networks run much more efficiently when making predictions about batches of data at a time (i.e., predicting the next transition for any different partial parses simultaneously). We can parse sentences in minibatches with the following algorithm:
 > **Input:** sentences, a list of sentences to be parsed and model, our model that makes parse decisions  
 
-> Initialize partial parses as a list of PartialParses, one for each sentence in sentences.  
-> Initialize unfinished parses as a shallow copy of partial parses.  
+> Initialize partial parses as a list of PartialParses, one for each sentence in sentences
+> Initialize unfinished parses as a shallow copy of partial parses
 > **while** unfinished parses is not empty **do**  
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Take the first batch size parses in unfinished parses as a minibatch  
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Use the model to predict the next transition for each partial parse in the minibatch  
@@ -79,7 +79,7 @@ Our network will predict which transition should be applied next to a partial pa
 > &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remove the completed (empty buffer and stack of size 1) parses from unfinished parses  
 > **end while**  
 
-> **Return:** The dependencies for each (now completed) parse in partial parses.
+> **Return:** The dependencies for each (now completed) parse in partial parses
 
 When `debug=True`, run
 ```sh
