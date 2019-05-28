@@ -109,7 +109,7 @@ Final evaluation on test set
 - test UAS: 76.90
 Done!
 ```
-The result looks really bad because the handout provided by the course says you can get a loss smaller than $0.08$ on the train set and an Unlabeled Attachment Score (UAS) larger than $87$ on the dev set. We can tweak the hyperparameters for our model to improve the performance.
+The result looks really bad because the handout provided by the course says you can get a loss smaller than 0.08 on the train set and an Unlabeled Attachment Score (UAS) larger than 87 on the dev set. We can tweak the hyperparameters for our model to improve the performance.
 
 In fact, I think this project is a bit confusing. Also, [the handout](http://web.stanford.edu/class/cs224n/assignments/a3.pdf) also talks about parsing error, but it's not useful for me at this moment.
 
