@@ -129,7 +129,7 @@ First setup CUDA and cuDNN.
 Then we can start to install our deep learning packages. Note that I already have Anaconda 4.7.12 in place. My Python version is 3.6.9; `pip` version is 19.2.3. 
 1. Install TensorFlow via Python `pip` in Anaconda Prompt.
 ```sh
-$ pip install –upgrade tensorflow-gpu
+$ pip install --upgrade tensorflow-gpu
 ```
 
 Test.
